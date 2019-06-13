@@ -50,10 +50,10 @@ func TestEval(t *testing.T) {
 
 	//setup attrs
 	tc.SetInput("devicePath", "/dev/ttyUSB0")
-	tc.SetInput("directCmd", "AT@1")
+	tc.SetInput("directCmd", "")
 	act.Eval(tc)
 
 	//check result attr
 	result := tc.GetOutput("result")
-	assert.Equal(t, result, "OBDII by elm329@gmail.com")
+	assert.Equal(t, result, "null")
 }

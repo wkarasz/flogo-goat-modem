@@ -5,14 +5,14 @@ import (
 	"github.com/TIBCOSoftware/flogo-lib/logger"
         "github.com/wkarasz/goat-modem/at"
 	"github.com/wkarasz/goat-modem/serial"
-	"github.com/wkarasz/goat-modem/trace"
+//	"github.com/wkarasz/goat-modem/trace"
 
         "flag"
-	"log"
-	"context"
+//	"log"
 	"fmt"
 	"io"
-	"os"
+//	"os"
+	"context"
 	"time"
 )
 
@@ -38,11 +38,11 @@ func (a *MyActivity) Metadata() *activity.Metadata {
 }
 
 // Eval implements activity.Activity.Eval
-func (a *MyActivity) Eval(context activity.Context) (done bool, err error)  {
+func (a *MyActivity) Eval(contextf activity.Context) (done bool, err error)  {
 
 	// do eval
-	device := context.GetInput("devicePath").(string)
-	cmd := context.GetInput("directCmd").(string)
+	device := contextf.GetInput("devicePath").(string)
+	cmd := contextf.GetInput("directCmd").(string)
         log.Infof("Device path capture [%s]", device)
 
         if flag.Lookup("serial") == nil {
@@ -54,29 +54,30 @@ func (a *MyActivity) Eval(context activity.Context) (done bool, err error)  {
                 )
         }
         baud := flag.Int("b", 115200, "baud rate")
-	verbose := flag.Bool("v", false, "log modem interactions")
+	//verbose := flag.Bool("v", false, "log modem interactions")
+	timeout := flag.Duration("t", 400*time.Millisecond, "command timeout period")
 	flag.Parse()
 	
-	m, err := serial.New(*device, baud)
+	m, err := serial.New(device, *baud)
 	if err != nil {
-		log.Println(err)
+		fmt.Println(err)
 		return
 	}
 	defer m.Close()
 	var mio io.ReadWriter = m
 	
-	if *verbose {
-		mio = trace.New(m, log.New(os.Stdout, "", log.LstdFlags))
-	}
-	a := at.New(mio)
+	//if *verbose {
+	//	mio = trace.New(m, fmt.New(os.Stdout, "", log.LstdFlags))
+	//}
+	b := at.New(mio)
 	ctx, cancel := context.WithTimeout(context.Background(), *timeout)
-	err = a.Init(ctx)
+	err = b.Init(ctx)
 	cancel()
 	if err != nil {
-		log.Println(err)
+		fmt.Println(err)
 		return
 	}
-	cmds := []string{
+	/*cmds := []string{
 		"I",
 		"+GCAP",
 		"+CMEE=2",
@@ -101,19 +102,32 @@ func (a *MyActivity) Eval(context activity.Context) (done bool, err error)  {
 	}
 	for _, cmd := range cmds {
 		ctx, cancel := context.WithTimeout(context.Background(), *timeout)
-		info, err := a.Command(ctx, cmd)
+		info, err := b.Command(ctx, cmd)
 		cancel()
-		fmt.Println("AT" + cmd)
+		log.Infof("AT" + cmd)
 		if err != nil {
-			fmt.Printf(" %s\n", err)
+			log.Infof(" %s\n", err)
 		} else {
 			for _, l := range info {
-				fmt.Printf(" %s\n", l)
+				log.Infof(" %s\n", l)
 			}
 		}
 	}
+	*/
 
-	context.SetOutput("result", info)
+	ctx, cancel = context.WithTimeout(context.Background(), *timeout)
+        info, err := b.Command(ctx, cmd)
+        cancel()
+        log.Infof("AT" + cmd)
+        if err != nil {
+                log.Infof(" %s\n", err)
+        } else {
+                for _, l := range info {
+        		log.Infof(" %s\n", l)
+                }
+        }
+
+	contextf.SetOutput("result", info)
 
 	return true, nil
 }
