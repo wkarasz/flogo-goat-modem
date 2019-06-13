@@ -1,0 +1,26 @@
+{
+  "name": "atmodemdirect",
+  "version": "0.0.1",
+  "type": "flogo:activity",
+  "description": "Execute raw AT commands",
+  "title": "AT Modem Direct Command",
+  "ref": "github.com/wkarasz/flogo-goat-modem/activity/atmodemdirect",
+  "author": "William Karasz",
+  "inputs":[
+    {
+      "name": "devicePath",
+      "type": "string",
+      "required": true
+    },
+    { "name": "directCmd",
+      "type": "string",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "type": "string"
+    }
+  ]
+}
