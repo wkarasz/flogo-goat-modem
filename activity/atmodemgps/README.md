@@ -27,7 +27,39 @@ Inputs and Outputs:
   ],
   "outputs": [
     {
-      "name": "result",
+      "name": "latitude",
+      "type": "string"
+    },
+    {
+      "name": "ns-indicator",
+      "type": "string"
+    },
+    {
+      "name": "longitude",
+      "type": "string"
+    },
+    {
+      "name": "ew-indicator",
+      "type": "string"
+    },
+    {
+      "name": "date",
+      "type": "string"
+    },
+    {
+      "name": "utctime",
+      "type": "string"
+    },
+    {
+      "name": "altitude",
+      "type": "string"
+    },
+    {
+      "name": "speed",
+      "type": "string"
+    },
+    {
+      "name": "course",
       "type": "string"
     }
   ]
@@ -41,4 +73,12 @@ Inputs and Outputs:
 # Outputs
 | Output           | Description    |
 |:-----------------|:---------------|
-| result           | The result will contain a string response of the command or will contain an error message |
+| latitude         | ddmm.mmmmmm    |
+| ns-indicator     | north or south |
+| longitude        | ddmm.mmmmmm    |
+| ew-indicator     | east or west |
+| date             | ddmmyy |
+| utctime          | hhmmss.s |
+| altitude         | altitude [meters] |
+| speed            | speed [knots] |
+| course           | course [degrees]|
