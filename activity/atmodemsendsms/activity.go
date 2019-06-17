@@ -21,7 +21,7 @@ var log = logger.GetLogger("activity-at-modem-send-sms")
 
 // String to hold the pointer for serial flag object
 var serialPathP string
-var timeout duration
+var timeout time.Duration
 var baud int
 
 // MyActivity is a stub for your Activity implementation
@@ -57,12 +57,12 @@ func (a *MyActivity) Eval(contextf activity.Context) (done bool, err error)  {
 			"Path to the serial device to use",
                 )
 		flag.IntVar(&baud, "baud", int(115200), "baud rate")
-		flag.DurationVar(&timeout, "t", 400*time.Millisecon, "command timeout period")
+		flag.DurationVar(&timeout, "t", 400*time.Millisecond, "command timeout period")
         }
 	//verbose := flag.Bool("v", false, "log modem interactions")
 	flag.Parse()
 	
-	m, err := serial.New(device, *baud)
+	m, err := serial.New(device, baud)
 	if err != nil {
 		fmt.Println(err)
 		return

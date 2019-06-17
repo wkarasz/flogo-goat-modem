@@ -51,7 +51,7 @@ func TestEval(t *testing.T) {
 	//setup attrs
 	tc.SetInput("devicePath", "/dev/ttyUSB0")
 	tc.SetInput("directCmd", "")
-        tc.SetInput("recipientMobile", "+15165814087")
+        tc.SetInput("recipientMobile", "+15165551234")
         tc.SetInput("message", "hello world")
 	act.Eval(tc)
 
