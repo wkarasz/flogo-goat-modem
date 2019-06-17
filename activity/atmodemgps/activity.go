@@ -1,4 +1,4 @@
-package atmodemsendsms
+package atmodemdirect
 
 import (
 	"github.com/TIBCOSoftware/flogo-lib/core/activity"
@@ -14,15 +14,16 @@ import (
 //	"os"
 	"context"
 	"time"
+	"strings"
 )
 
 // log is the default logger which we'll use to log
-var log = logger.GetLogger("activity-at-modem-send-sms")
+var log = logger.GetLogger("activity-at-modem-direct")
 
 // String to hold the pointer for serial flag object
 var serialPathP string
-var timeout duration
 var baud int
+var timeout time.Duration
 
 // MyActivity is a stub for your Activity implementation
 type MyActivity struct {
@@ -44,9 +45,7 @@ func (a *MyActivity) Eval(contextf activity.Context) (done bool, err error)  {
 
 	// do eval
 	device := contextf.GetInput("devicePath").(string)
-	cmd := contextf.GetInput("directCmd").(string)
-	phoneNumber := contextf.GetInput("recipientMobile").(string)
-	message := contextf.GetInput("message").(string)
+	cmd := "+cgpsinfo"
         log.Infof("Device path capture [%s]", device)
 
         if flag.Lookup("serial") == nil {
@@ -57,12 +56,11 @@ func (a *MyActivity) Eval(contextf activity.Context) (done bool, err error)  {
 			"Path to the serial device to use",
                 )
 		flag.IntVar(&baud, "baud", int(115200), "baud rate")
-		flag.DurationVar(&timeout, "t", 400*time.Millisecon, "command timeout period")
+		flag.DurationVar(&timeout, "t", 400*time.Millisecond, "command timeout period")
         }
-	//verbose := flag.Bool("v", false, "log modem interactions")
 	flag.Parse()
 	
-	m, err := serial.New(device, *baud)
+	m, err := serial.New(device, baud)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -83,7 +81,8 @@ func (a *MyActivity) Eval(contextf activity.Context) (done bool, err error)  {
 	}
 
 	ctx, cancel = context.WithTimeout(context.Background(), timeout)
-        info, err := b.SMSCommand(ctx, "+cmgs=\"" + phoneNumber + "\"", message)
+        info, err := b.Command(ctx, cmd)
+        cancel()
         log.Infof("AT" + cmd)
         if err != nil {
                 log.Infof(" %s\n", err)
@@ -93,7 +92,16 @@ func (a *MyActivity) Eval(contextf activity.Context) (done bool, err error)  {
                 }
         }
 
-	contextf.SetOutput("result", info)
-
+	log.Info(info)	
+	tmpArray := strings.Split(info[0], ",")
+	contextf.SetOutput("latitude", strings.TrimPrefix(tmpArray[0], strings.ToUpper(cmd)+": "))
+	contextf.SetOutput("ns-indicator", tmpArray[1])
+	contextf.SetOutput("longitude", tmpArray[2]) 
+	contextf.SetOutput("ew-indicator", tmpArray[3])
+	contextf.SetOutput("date", tmpArray[4])
+        contextf.SetOutput("utctime", tmpArray[5])
+	contextf.SetOutput("altitude", tmpArray[6])
+	contextf.SetOutput("speed", tmpArray[7])
+	contextf.SetOutput("course", tmpArray[8])
 	return true, nil
 }

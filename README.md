@@ -9,3 +9,4 @@ The library consists of pre-cast functions for SMS send commands and a direct de
   * [activity/atmodemdirect](activity/atmodemdirect/README.md)
 * Pre-cast functions
   * [activity/atmodemsendsms](activity/atmodemsendsms/README.md)
+  * [activity/atmodemgps](activity/atmodemgps/README.md)
