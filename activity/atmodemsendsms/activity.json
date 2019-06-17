@@ -1,10 +1,10 @@
 {
-  "name": "atmodemdirect",
+  "name": "atmodemsendsms",
   "version": "0.0.1",
   "type": "flogo:activity",
-  "description": "Execute raw AT commands",
-  "title": "AT Modem Direct Command",
-  "ref": "github.com/wkarasz/flogo-goat-modem/activity/atmodemdirect",
+  "description": "Send SMS message",
+  "title": "AT Modem Send SMS Command",
+  "ref": "github.com/wkarasz/flogo-goat-modem/activity/atmodemsendsms",
   "author": "William Karasz",
   "inputs":[
     {

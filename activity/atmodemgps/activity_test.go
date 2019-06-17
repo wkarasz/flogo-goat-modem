@@ -1,4 +1,4 @@
-package atmodemdirect
+package atmodemgpsinfo
 
 import (
 	"io/ioutil"

@@ -1,4 +1,4 @@
-package atmodemdirect
+package atmodemsendsms
 
 import (
 	"io/ioutil"

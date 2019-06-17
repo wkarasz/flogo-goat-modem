@@ -1,4 +1,4 @@
-package atmodemdirect
+package atmodemgpsinfo
 
 import (
 	"github.com/TIBCOSoftware/flogo-lib/core/activity"
