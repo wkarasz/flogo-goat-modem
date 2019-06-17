@@ -21,6 +21,8 @@ var log = logger.GetLogger("activity-at-modem-direct")
 
 // String to hold the pointer for serial flag object
 var serialPathP string
+var baud int
+var timeout time.Duration
 
 // MyActivity is a stub for your Activity implementation
 type MyActivity struct {
@@ -52,13 +54,12 @@ func (a *MyActivity) Eval(contextf activity.Context) (done bool, err error)  {
                         device,
 			"Path to the serial device to use",
                 )
+		flag.IntVar(&baud, "baud", int(115200), "baud rate")
+		flag.DurationVar(&timeout, "t", 400*time.Millisecond, "command timeout period")
         }
-        baud := flag.Int("baud", 115200, "baud rate")
-	//verbose := flag.Bool("v", false, "log modem interactions")
-	timeout := flag.Duration("t", 400*time.Millisecond, "command timeout period")
 	flag.Parse()
 	
-	m, err := serial.New(device, *baud)
+	m, err := serial.New(device, baud)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -70,7 +71,7 @@ func (a *MyActivity) Eval(contextf activity.Context) (done bool, err error)  {
 	//	mio = trace.New(m, fmt.New(os.Stdout, "", log.LstdFlags))
 	//}
 	b := at.New(mio)
-	ctx, cancel := context.WithTimeout(context.Background(), *timeout)
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	err = b.Init(ctx)
 	cancel()
 	if err != nil {
@@ -115,7 +116,7 @@ func (a *MyActivity) Eval(contextf activity.Context) (done bool, err error)  {
 	}
 	*/
 
-	ctx, cancel = context.WithTimeout(context.Background(), *timeout)
+	ctx, cancel = context.WithTimeout(context.Background(), timeout)
         info, err := b.Command(ctx, cmd)
         cancel()
         log.Infof("AT" + cmd)
